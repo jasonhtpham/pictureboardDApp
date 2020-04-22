@@ -1,40 +1,169 @@
 <script>
-import ipfs from "./ipfs";
+import Upload from "./Upload.svelte";
+import ViewImage from "./ViewImage.svelte";
+import ethergramABI from "./ethergram_abi.js"
+var bs58 = require('bs58');
 
-let filepreview;
+var Web3 = require('web3');
+var web3 = window.web3;
 
-const onSubmit = (e) => {
-	e.preventDefault();
-	console.log("Submitted");
-	ipfs.add(filepreview, (err, hash) => {
-		if (err) {
-			return console.log(err);
-		}
-		console.log("https://ipfs.infura.io/ipfs/" + hash);
-	})
+const IPFS = require('ipfs');
+
+export let fileHash;
+export let postCaption;
+
+let etherGram;
+
+let pages = {
+	postImage: true,
+	viewImage: false
+};
+
+const setPage = key => {
+    for (let page in pages) {
+      pages[page] = false;
+    }
+    pages[key] = true;
+  };
+
+const upload = (e) => {
+	fileHash = e.detail.path;
+	const hashToSend = "0x" + bs58.decode(fileHash).slice(2).toString('hex');
+
+	etherGram.methods.upload(hashToSend).send({from: '0x519Ff9BEFa4127688900C31922350103aA5495e6'})
+	setPage("viewImage");
 }
 
-const fileChange = async (e) => {
-	e.preventDefault();
-	const file = e.srcElement.files[0];
-	filepreview = await readFile(file);
-	console.log(filepreview);
+const caption = (e) => {
+	postCaption = e.detail;
 }
 
-function readFile (file) {
-	const reader = new FileReader()
-	return new Promise((resolve, reject) => {
-		reader.onerror = () => {
-		reader.abort()
-		reject(`problem reading file ${file.name}`)
-		}
-		reader.onload = () => {
-		resolve(reader.result)
-		}
-		reader.readAsDataURL(file)
-  })
+
+function startApp() {
+	etherGram = new web3.eth.Contract([
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_ipfsHash",
+				"type": "bytes32"
+			}
+		],
+		"name": "upload",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_ipfsHash",
+				"type": "bytes32"
+			}
+		],
+		"name": "clap",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_imageHash",
+				"type": "bytes32"
+			},
+			{
+				"name": "_commentHash",
+				"type": "bytes32"
+			}
+		],
+		"name": "comment",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_ipfsHash",
+				"type": "bytes32"
+			}
+		],
+		"name": "getClapCount",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_uploader",
+				"type": "address"
+			}
+		],
+		"name": "getUploads",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bytes32[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_ipfsHash",
+				"type": "bytes32"
+			}
+		],
+		"name": "getComments",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bytes32[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+],'0x9ae84b20be52230a1c31b87201edd94dbeea1682');
 }
+
+window.addEventListener('load', function() {
+
+	// Checking if Web3 has been injected by the browser (Mist/MetaMask)
+	if (typeof web3 !== 'undefined') {
+	// Use Mist/MetaMask's provider
+	console.log("Use MetaMask as provider");
+	web3 = new Web3(web3.currentProvider);
 	
+	} else {
+		console.log("Error! There is no provider to use!!!");
+	}
+
+	// Now you can start your app & access web3js freely:
+	startApp()
+
+})
+
 </script>
 
 <style>
@@ -45,9 +174,14 @@ function readFile (file) {
 
 <h1>Picture board DApp by Jason</h1>
 
-<img src={filepreview} alt="filepreview" />
 
-<form on:submit={onSubmit}>
-<input type="file" on:change={fileChange} />
-<input type="submit">
-</form>
+
+{#if pages.postImage}
+<Upload 
+	on:upload={upload} 
+	on:caption={caption}/>
+
+{:else if pages.viewImage}
+<ViewImage {fileHash} {postCaption} />
+
+{/if}
