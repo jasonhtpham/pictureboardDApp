@@ -10,7 +10,7 @@
   const ethergramABI = require("./ethergram_abi.js");
   const scAddress = "0x9aa9c91c79e22882139f59a322173eb349783484";
 
-  let imagesFromSC = [];
+  var postsFromSC = [];
 
   let pages = {
     postImage: true,
@@ -24,11 +24,21 @@
     pages[key] = true;
   };
 
+  const hashToBytes32 = (hash) => {
+    return "0x" + bs58.decode(hash).slice(2).toString('hex');
+  }
+
   const uploadToSC = async (e) => {
     const ipfsHash = e.detail.path;
     //convert ipfsHash to bytes32 to fit the SC
-	  const hashToSend = "0x" + bs58.decode(ipfsHash).slice(2).toString('hex');
+	  const hashToSend = hashToBytes32(ipfsHash);
     etherGram.methods.upload(hashToSend).send({from: '0x519Ff9BEFa4127688900C31922350103aA5495e6'});
+  }
+
+  const clap = (e) => {
+    e.preventDefault()
+    const imageHash = hashToBytes32(e.detail);
+    etherGram.methods.clap(imageHash).send({from: '0x519Ff9BEFa4127688900C31922350103aA5495e6'})
   }
 
   const getPostsFromSC = async (e) => {
@@ -37,15 +47,21 @@
     for (let i=0; i < result.length; i++) {
       //default ipfs values for first 2 bytes: function: 0x12=sha2, size: 0x20=256 bits
       //cut the "0x" off
-      const hex = "1220" + result[i].slice(2)
+      const hex = "1220" + result[i].slice(2);
       const hashBytes = Buffer.from(hex, 'hex');
-      imagesFromSC.push(bs58.encode(hashBytes));
+      const image = bs58.encode(hashBytes);
+      const clapCounts = await getClapCountFromSC(result[i]);
+      postsFromSC.push({
+        image: image,
+        clapCounts: clapCounts
+      });
     }
+    console.log(postsFromSC);
     setPage("viewImage");
   }
 
   const getClapCountFromSC = async (imageHash) => {
-    etherGram.methods.getClapCount(imageHash).call({from: '0x519Ff9BEFa4127688900C31922350103aA5495e6'})
+    return etherGram.methods.getClapCount(imageHash).call({from: '0x519Ff9BEFa4127688900C31922350103aA5495e6'})
   }
 
   function startApp() {
@@ -85,6 +101,6 @@
 />
 
 {:else if pages.viewImage}
-<ViewImage {imagesFromSC}/>
+<ViewImage on:clap={clap} {postsFromSC} />
 
 {/if}

@@ -1,24 +1,25 @@
 <script>
-    // import {createEventDispatcher} from "svelte";
-    export let imagesFromSC;
-    let comment = "";
+    import {createEventDispatcher} from "svelte";
+    export let postsFromSC;
 
-    const commentToImage = (e) => {
+    let comment = "";
+    const dispatch = createEventDispatcher();
+
+    const clap = (e) => {
         e.preventDefault();
-        // console.log(imageHash);
-        console.log(e);
+        dispatch("clap",e.target.alt);
     }
 </script>
 
 <p>Images</p>
 
 <ul>
-{#each imagesFromSC as image}
+{#each postsFromSC as post}
 <li>
-    <form on:submit={commentToImage}>
-        <img src="https://ipfs.infura.io/ipfs/{image}" alt="image link"/>
-        <input type="text" placeholder="Comment" /> <input type="submit" value="Send"/>
+    <form on:dblclick={clap}>
+        <img src="https://ipfs.infura.io/ipfs/{post.image}" alt={post.image}/>
     </form>
+    <p>{post.clapCounts} Like(s) </p>
 </li>
 {/each}
 </ul>
