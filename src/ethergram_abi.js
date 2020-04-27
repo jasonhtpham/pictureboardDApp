@@ -1,5 +1,19 @@
 var ethergramABI = [
 	{
+		"constant": true,
+		"inputs": [],
+		"name": "getAllPosts",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bytes32[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"constant": false,
 		"inputs": [
 			{
@@ -49,7 +63,7 @@ var ethergramABI = [
 		"constant": false,
 		"inputs": [
 			{
-				"name": "_ipfsHash",
+				"name": "_imageHash",
 				"type": "bytes32"
 			}
 		],
@@ -65,14 +79,14 @@ var ethergramABI = [
 		"type": "function"
 	},
 	{
-		"constant": false,
+		"constant": true,
 		"inputs": [
 			{
 				"name": "_uploader",
 				"type": "address"
 			}
 		],
-		"name": "getUploads",
+		"name": "getPostsByUploader",
 		"outputs": [
 			{
 				"name": "",
@@ -80,14 +94,14 @@ var ethergramABI = [
 			}
 		],
 		"payable": false,
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"constant": false,
 		"inputs": [
 			{
-				"name": "_ipfsHash",
+				"name": "_imageHash",
 				"type": "bytes32"
 			}
 		],
@@ -101,5 +115,68 @@ var ethergramABI = [
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "uploader",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "ipfsHash",
+				"type": "bytes32"
+			}
+		],
+		"name": "LogUpload",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "clapper",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "ipfsHash",
+				"type": "bytes32"
+			}
+		],
+		"name": "LogClap",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "commenter",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "imageHash",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"name": "commentHash",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"name": "timestamp",
+				"type": "uint256"
+			}
+		],
+		"name": "LogComment",
+		"type": "event"
 	}
 ]
+
+module.exports = ethergramABI;

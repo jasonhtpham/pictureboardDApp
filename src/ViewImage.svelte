@@ -1,9 +1,24 @@
 <script>
-    export let fileHash;
-    export let postCaption;
+    // import {createEventDispatcher} from "svelte";
+    export let imagesFromSC;
+    let comment = "";
 
+    const commentToImage = (e) => {
+        e.preventDefault();
+        // console.log(imageHash);
+        console.log(e);
+    }
 </script>
 
-<p> {postCaption} </p>
+<p>Images</p>
 
-<img src="https://ipfs.infura.io/ipfs/{fileHash}" alt="image link"/>
+<ul>
+{#each imagesFromSC as image}
+<li>
+    <form on:submit={commentToImage}>
+        <img src="https://ipfs.infura.io/ipfs/{image}" alt="image link"/>
+        <input type="text" placeholder="Comment" /> <input type="submit" value="Send"/>
+    </form>
+</li>
+{/each}
+</ul>

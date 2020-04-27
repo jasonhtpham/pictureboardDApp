@@ -7,25 +7,20 @@
     let fileToUpload;
     let filePreview;
 
-    const uploadFile = async (file) => {
+    const uploadFileIPFS = async (file) => {
         const ipfs = await IPFS.create();
-
         for await (const result of ipfs.add(file)) {
             dispatch("upload", result);
         }
     }
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault()
-
-        uploadFile(fileToUpload);
-        dispatch("caption", e.target.elements[1].value)
+        uploadFileIPFS(fileToUpload);
     }
 
     const fileChange = async (e) => {
-
         fileToUpload = e.srcElement.files[0];
-
         filePreview = await readFile(fileToUpload);
     }
 
@@ -49,6 +44,7 @@
 
 <form on:submit={onSubmit}>
 <input type="file" on:change={fileChange} />
-<input type="text" placeholder="Caption" />
 <input type="submit">
 </form>
+
+<input type="submit" on:click={() => dispatch("viewImage")} value="Uploaded Images" />
