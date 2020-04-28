@@ -2,24 +2,37 @@
     import {createEventDispatcher} from "svelte";
     export let postsFromSC;
 
-    let comment = "";
     const dispatch = createEventDispatcher();
 
     const clap = (e) => {
         e.preventDefault();
         dispatch("clap",e.target.alt);
     }
+
+    const commentOnPost = (e) => {
+        e.preventDefault();
+        dispatch("comment", e.target);
+    }
 </script>
 
-<p>Images</p>
+<h2>Picture Board</h2>
+
+    <p>Double-click on image to give it a like. <br/>
+    And, feel free to drop your comments and submit them.</p>
+
 
 <ul>
 {#each postsFromSC as post}
 <li>
-    <form on:dblclick={clap}>
+    <form on:dblclick={clap} on:submit={commentOnPost} name={post.image}>
         <img src="https://ipfs.infura.io/ipfs/{post.image}" alt={post.image}/>
+        <input type="text" placeholder="Comment your thoughts about this image" maxlength="32"/> <input type="submit">
     </form>
     <p>{post.clapCounts} Like(s) </p>
+    <p><b>Comments ({post.comment.length})</b></p>
+    {#each post.comment as comment}
+        <p>{comment} <br /> </p>
+    {/each}
 </li>
 {/each}
 </ul>

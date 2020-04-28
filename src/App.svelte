@@ -33,12 +33,19 @@
     //convert ipfsHash to bytes32 to fit the SC
 	  const hashToSend = hashToBytes32(ipfsHash);
     etherGram.methods.upload(hashToSend).send({from: '0x519Ff9BEFa4127688900C31922350103aA5495e6'});
+    getPostsFromSC(e);
   }
 
   const clap = (e) => {
     e.preventDefault()
     const imageHash = hashToBytes32(e.detail);
     etherGram.methods.clap(imageHash).send({from: '0x519Ff9BEFa4127688900C31922350103aA5495e6'})
+  }
+
+  const comment = (e) => {
+    const commentHash = web3.utils.asciiToHex(e.detail.elements[0].value);
+    const imageHash = hashToBytes32(e.detail.name);
+    etherGram.methods.comment(imageHash, commentHash).send({from: '0x519Ff9BEFa4127688900C31922350103aA5495e6'});
   }
 
   const getPostsFromSC = async (e) => {
@@ -50,10 +57,14 @@
       const hex = "1220" + result[i].slice(2);
       const hashBytes = Buffer.from(hex, 'hex');
       const image = bs58.encode(hashBytes);
+
       const clapCounts = await getClapCountFromSC(result[i]);
+      const comments = await getComment(result[i]);
+
       postsFromSC.push({
         image: image,
-        clapCounts: clapCounts
+        clapCounts: clapCounts,
+        comment: comments
       });
     }
     console.log(postsFromSC);
@@ -62,6 +73,15 @@
 
   const getClapCountFromSC = async (imageHash) => {
     return etherGram.methods.getClapCount(imageHash).call({from: '0x519Ff9BEFa4127688900C31922350103aA5495e6'})
+  }
+
+  const getComment = async (imageHash) => {
+    const result = await etherGram.methods.getComments(imageHash).call({from: '0x519Ff9BEFa4127688900C31922350103aA5495e6'})
+    var processedComments=[];
+    result.forEach(commentHash => {
+      processedComments.push(web3.utils.toAscii(commentHash));
+    });
+    return processedComments;
   }
 
   function startApp() {
@@ -89,10 +109,14 @@
 <style>
 	h1 {
 		color: rgb(59, 70, 168);
+    font-size: 80px;
+    text-align: center;
+    background-color: azure
 	}
 </style>
 
 <h1>Picture board DApp by Jason</h1>
+
 
 {#if pages.postImage}
 <Upload 
@@ -101,6 +125,6 @@
 />
 
 {:else if pages.viewImage}
-<ViewImage on:clap={clap} {postsFromSC} />
+<ViewImage on:clap={clap} on:comment={comment} {postsFromSC} />
 
 {/if}

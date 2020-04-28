@@ -40,6 +40,8 @@
 	
 </script>
 
+<h2>Upload your Images to Picture Board</h2>
+
 <img src={filePreview} alt="filepreview" />
 
 <form on:submit={onSubmit}>
@@ -47,4 +49,4 @@
 <input type="submit">
 </form>
 
-<input type="submit" on:click={() => dispatch("viewImage")} value="Uploaded Images" />
+<input type="submit" on:click={() => dispatch("viewImage")} value="View Picture Board" />
