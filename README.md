@@ -1,64 +1,11 @@
-# svelte app
+This Dapp is written as part of my intern with Flex Dapps Pty Ltd.
 
-This is a project template for [Svelte](https://svelte.dev) apps. It lives at https://github.com/sveltejs/template-webpack.
+The front-end is written in <a href="https://svelte.dev/"> Svelte </a>
 
-To create a new project based on this template using [degit](https://github.com/Rich-Harris/degit):
+The app uses `IPFS` as a decentralized file storage and `webpack` to facilitate the web functionalities.
 
-```bash
-npx degit sveltejs/template-webpack svelte-app
-cd svelte-app
-```
+<a href="https://github.com/ipfs/js-ipfs"> JS-IPFS </a> is used to interact with IPFS.
 
-*Note that you will need to have [Node.js](https://nodejs.org) installed.*
+And, of course, this cannot be a Dapp without using `web3`, find out more <a href="https://web3js.readthedocs.io/en/v1.2.0/index.html"> here </a>.
 
-
-## Get started
-
-Install the dependencies...
-
-```bash
-cd svelte-app
-npm install
-```
-
-...then start webpack:
-
-```bash
-npm run dev
-```
-
-Navigate to [localhost:8080](http://localhost:8080). You should see your app running. Edit a component file in `src`, save it, and the page should reload with your changes.
-
-
-## Deploying to the web
-
-### With [now](https://zeit.co/now)
-
-Install `now` if you haven't already:
-
-```bash
-npm install -g now
-```
-
-Then, from within your project folder:
-
-```bash
-now
-```
-
-As an alternative, use the [Now desktop client](https://zeit.co/download) and simply drag the unzipped project folder to the taskbar icon.
-
-### With [surge](https://surge.sh/)
-
-Install `surge` if you haven't already:
-
-```bash
-npm install -g surge
-```
-
-Then, from within your project folder:
-
-```bash
-npm run build
-surge public
-```
+Run this app by installing aforementioned dependencies and `npm run dev`
