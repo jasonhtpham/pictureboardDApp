@@ -9,6 +9,7 @@
   let etherGram;
   const ethergramABI = require("./ethergram_abi.js");
   const scAddress = "0x9aa9c91c79e22882139f59a322173eb349783484";
+  const myAddress = "0x519Ff9BEFa4127688900C31922350103aA5495e6";
 
   var postsFromSC = [];
 
@@ -32,25 +33,25 @@
     const ipfsHash = e.detail.path;
     //convert ipfsHash to bytes32 to fit the SC
 	  const hashToSend = hashToBytes32(ipfsHash);
-    etherGram.methods.upload(hashToSend).send({from: '0x519Ff9BEFa4127688900C31922350103aA5495e6'});
+    etherGram.methods.upload(hashToSend).send({from: myAddress});
     getPostsFromSC(e);
   }
 
   const clap = (e) => {
     e.preventDefault()
     const imageHash = hashToBytes32(e.detail);
-    etherGram.methods.clap(imageHash).send({from: '0x519Ff9BEFa4127688900C31922350103aA5495e6'})
+    etherGram.methods.clap(imageHash).send({from: myAddress})
   }
 
   const comment = (e) => {
     const commentHash = web3.utils.asciiToHex(e.detail.elements[0].value);
     const imageHash = hashToBytes32(e.detail.name);
-    etherGram.methods.comment(imageHash, commentHash).send({from: '0x519Ff9BEFa4127688900C31922350103aA5495e6'});
+    etherGram.methods.comment(imageHash, commentHash).send({from: myAddress});
   }
 
   const getPostsFromSC = async (e) => {
     e.preventDefault()
-    const result = await etherGram.methods.getAllPosts().call({from: '0x519Ff9BEFa4127688900C31922350103aA5495e6'});
+    const result = await etherGram.methods.getAllPosts().call({from: myAddress});
     for (let i=0; i < result.length; i++) {
       //default ipfs values for first 2 bytes: function: 0x12=sha2, size: 0x20=256 bits
       //cut the "0x" off
@@ -67,16 +68,16 @@
         comment: comments
       });
     }
-    console.log(postsFromSC);
+    console.log();
     setPage("viewImage");
   }
 
   const getClapCountFromSC = async (imageHash) => {
-    return etherGram.methods.getClapCount(imageHash).call({from: '0x519Ff9BEFa4127688900C31922350103aA5495e6'})
+    return etherGram.methods.getClapCount(imageHash).call({from: myAddress})
   }
 
   const getComment = async (imageHash) => {
-    const result = await etherGram.methods.getComments(imageHash).call({from: '0x519Ff9BEFa4127688900C31922350103aA5495e6'})
+    const result = await etherGram.methods.getComments(imageHash).call({from: myAddress})
     var processedComments=[];
     result.forEach(commentHash => {
       processedComments.push(web3.utils.toAscii(commentHash));
