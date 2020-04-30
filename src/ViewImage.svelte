@@ -20,6 +20,7 @@
     <p>Double-click on image to give it a like. <br/>
     And, feel free to drop your comments and submit them.</p>
 
+<input type="submit" value="Back" on:click={() => dispatch("back")}/>
 
 <ul>
 {#each postsFromSC as post}

@@ -1,6 +1,7 @@
 <script>
   import Upload from "./Upload.svelte";
   import ViewImage from "./ViewImage.svelte";
+  import Uploading from "./Uploading.svelte";
 
   var Web3 = require('web3');
   var web3 = window.web3;
@@ -15,7 +16,8 @@
 
   let pages = {
     postImage: true,
-    viewImage: false
+    viewImage: false,
+    uploading: false
   };
 
   const setPage = key => {
@@ -51,6 +53,7 @@
 
   const getPostsFromSC = async (e) => {
     e.preventDefault()
+    setPage("uploading");
     const result = await etherGram.methods.getAllPosts().call({from: myAddress});
     for (let i=0; i < result.length; i++) {
       //default ipfs values for first 2 bytes: function: 0x12=sha2, size: 0x20=256 bits
@@ -68,7 +71,7 @@
         comment: comments
       });
     }
-    console.log();
+    
     setPage("viewImage");
   }
 
@@ -125,7 +128,10 @@
   on:viewImage={getPostsFromSC}
 />
 
+{:else if pages.uploading}
+<Uploading/>
+
 {:else if pages.viewImage}
-<ViewImage on:clap={clap} on:comment={comment} {postsFromSC} />
+<ViewImage on:back={() => setPage("postImage")} on:clap={clap} on:comment={comment} {postsFromSC} />
 
 {/if}
