@@ -10,7 +10,7 @@
   let etherGram;
   const ethergramABI = require("./ethergram_abi.js");
   const scAddress = "0x9aa9c91c79e22882139f59a322173eb349783484";
-  const myAddress = "0x519Ff9BEFa4127688900C31922350103aA5495e6";
+  let callerAddress;
 
   var postsFromSC = [];
 
@@ -35,26 +35,26 @@
     const ipfsHash = e.detail.path;
     //convert ipfsHash to bytes32 to fit the SC
 	  const hashToSend = hashToBytes32(ipfsHash);
-    etherGram.methods.upload(hashToSend).send({from: myAddress});
+    etherGram.methods.upload(hashToSend).send({from: callerAddress});
     getPostsFromSC(e);
   }
 
   const clap = (e) => {
     e.preventDefault()
     const imageHash = hashToBytes32(e.detail);
-    etherGram.methods.clap(imageHash).send({from: myAddress})
+    etherGram.methods.clap(imageHash).send({from: callerAddress})
   }
 
   const comment = (e) => {
     const commentHash = web3.utils.asciiToHex(e.detail.elements[0].value);
     const imageHash = hashToBytes32(e.detail.name);
-    etherGram.methods.comment(imageHash, commentHash).send({from: myAddress});
+    etherGram.methods.comment(imageHash, commentHash).send({from: callerAddress});
   }
 
   const getPostsFromSC = async (e) => {
     e.preventDefault()
     setPage("uploading");
-    const result = await etherGram.methods.getAllPosts().call({from: myAddress});
+    const result = await etherGram.methods.getAllPosts().call({from: callerAddress});
     for (let i=0; i < result.length; i++) {
       //default ipfs values for first 2 bytes: function: 0x12=sha2, size: 0x20=256 bits
       //cut the "0x" off
@@ -76,11 +76,11 @@
   }
 
   const getClapCountFromSC = async (imageHash) => {
-    return etherGram.methods.getClapCount(imageHash).call({from: myAddress})
+    return etherGram.methods.getClapCount(imageHash).call({from: callerAddress})
   }
 
   const getComment = async (imageHash) => {
-    const result = await etherGram.methods.getComments(imageHash).call({from: myAddress})
+    const result = await etherGram.methods.getComments(imageHash).call({from: callerAddress})
     var processedComments=[];
     result.forEach(commentHash => {
       processedComments.push(web3.utils.toAscii(commentHash));
@@ -92,19 +92,27 @@
 	  etherGram = new web3.eth.Contract(ethergramABI,scAddress);
   }
 
-  window.addEventListener('load', function() {
+  window.addEventListener('load', async function() {
     // Checking if Web3 has been injected by the browser (Mist/MetaMask)
     if (typeof web3 !== 'undefined') {
     // Use Mist/MetaMask's provider
     console.log("Use MetaMask as provider");
-    web3 = new Web3(web3.currentProvider);
-          
+    web3 = new Web3(window.web3.currentProvider);
     } else {
       console.log("Error! There is no provider to use!!!");
     }
 
     // Now you can start your app & access web3js freely:
     startApp()
+
+    var accounts = await web3.eth.getAccounts();
+    callerAddress = accounts[0];
+
+    var accountInterval = setInterval(function() {
+      if (web3.eth.accounts[0] !== callerAddress) {
+        callerAddress = web3.eth.accounts[0];
+      }
+    }, 100);
   })
 
 
