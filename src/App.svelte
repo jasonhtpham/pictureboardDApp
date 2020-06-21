@@ -32,6 +32,7 @@
   }
 
   const uploadToSC = async (e) => {
+    console.log(callerAddress);
     const ipfsHash = e.detail.path;
     //convert ipfsHash to bytes32 to fit the SC
 	  const hashToSend = hashToBytes32(ipfsHash);
@@ -89,7 +90,7 @@
   }
 
   function startApp() {
-	  etherGram = new web3.eth.Contract(ethergramABI,scAddress);
+    etherGram = new web3.eth.Contract(ethergramABI,scAddress);
   }
 
   window.addEventListener('load', async function() {
@@ -108,11 +109,14 @@
     var accounts = await web3.eth.getAccounts();
     callerAddress = accounts[0];
 
-    var accountInterval = setInterval(function() {
-      if (web3.eth.accounts[0] !== callerAddress) {
-        callerAddress = web3.eth.accounts[0];
+    var accountInterval = setInterval(async function() {
+      let accounts = await web3.eth.getAccounts();
+      if (accounts[0] !== callerAddress) {
+        callerAddress = accounts[0];
       }
     }, 100);
+
+    console.log(callerAddress);
   })
 
 
@@ -120,14 +124,15 @@
 
 <style>
 	h1 {
-		color: rgb(59, 70, 168);
+		color: white;
     font-size: 80px;
     text-align: center;
-    background-color: azure
+    background-color: #31b3ca
 	}
 </style>
 
-<h1>Picture board DApp by Jason</h1>
+
+<h1 class="title">Picture board DApp by Jason</h1>
 
 
 {#if pages.postImage}

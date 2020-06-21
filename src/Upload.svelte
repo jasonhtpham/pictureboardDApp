@@ -28,11 +28,11 @@
         const reader = new FileReader()
         return new Promise((resolve, reject) => {
             reader.onerror = () => {
-            reader.abort()
-            reject(`problem reading file ${file.name}`)
+                reader.abort()
+                reject(`problem reading file ${file.name}`)
             }
             reader.onload = () => {
-            resolve(reader.result)
+                resolve(reader.result)
             }
             reader.readAsDataURL(file)
     })
@@ -40,13 +40,18 @@
 	
 </script>
 
-<h2>Upload your Images to Picture Board</h2>
+<h2 class="subtitle">Upload your Images to Picture Board</h2>
+<div class="preview">
+    <img src={filePreview} alt="filepreview" />
+</div>
 
-<img src={filePreview} alt="filepreview" />
+<div class="upload-form" id="upload-form">
+    <form on:submit={onSubmit}>
+        <input type="file" on:change={fileChange} />
+        <input type="submit">
+    </form>
+</div>
 
-<form on:submit={onSubmit}>
-<input type="file" on:change={fileChange} />
-<input type="submit">
-</form>
-
-<input type="submit" on:click={() => dispatch("viewImage")} value="View Picture Board" />
+<div class="view-image-button">
+    <input type="submit" on:click={() => dispatch("viewImage")} value="View Picture Board" />
+</div>
