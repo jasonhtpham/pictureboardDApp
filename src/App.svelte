@@ -32,7 +32,6 @@
   }
 
   const uploadToSC = async (e) => {
-    console.log(callerAddress);
     const ipfsHash = e.detail.path;
     //convert ipfsHash to bytes32 to fit the SC
 	  const hashToSend = hashToBytes32(ipfsHash);
@@ -116,7 +115,6 @@
       }
     }, 100);
 
-    console.log(callerAddress);
   })
 
 
@@ -145,6 +143,6 @@
 <Uploading/>
 
 {:else if pages.viewImage}
-<ViewImage on:back={() => setPage("postImage")} on:clap={clap} on:comment={comment} {postsFromSC} />
+<ViewImage on:clap={clap} on:comment={comment} {postsFromSC} />
 
 {/if}
