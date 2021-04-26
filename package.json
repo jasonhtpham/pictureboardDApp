@@ -16,8 +16,8 @@
   "scripts": {
     "start": "webpack serve --mode=development --config=webpack.config.js",
     "heroku-prebuild": "npm install --dev",
-    "build": "webpack --mode production",
-    "dev": "webpack serve"
+    "build": "cross-env NODE_ENV=production webpack",
+    "dev": "webpack-dev-server --content-base public --host 0.0.0.0 --port 8082"
   },
   "dependencies": {
     "axios": "^0.19.2",
