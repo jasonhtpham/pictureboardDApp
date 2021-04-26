@@ -1,0 +1,4 @@
+applications:
+- name: SIT737-mvp
+  random-route: true
+  memory: 64M
