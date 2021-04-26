@@ -95,9 +95,9 @@
   window.addEventListener('load', async function() {
     // Checking if Web3 has been injected by the browser (Mist/MetaMask)
     if (typeof web3 !== 'undefined') {
-    // Use Mist/MetaMask's provider
-    console.log("Use MetaMask as provider");
-    web3 = new Web3(window.web3.currentProvider);
+      // Use Mist/MetaMask's provider
+      console.log("Use MetaMask as provider");
+      web3 = new Web3(window.web3.currentProvider);
     } else {
       console.log("Error! There is no provider to use!!!");
     }
@@ -106,6 +106,9 @@
     startApp()
 
     var accounts = await web3.eth.getAccounts();
+    // console.log(accounts);
+    // web3.eth.getAccounts(console.log);
+
     callerAddress = accounts[0];
 
     var accountInterval = setInterval(async function() {
