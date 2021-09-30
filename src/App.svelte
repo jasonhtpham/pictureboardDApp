@@ -27,10 +27,12 @@
     pages[key] = true;
   };
 
+// the conversion function used to intepret the response from the contract
   const hashToBytes32 = (hash) => {
     return "0x" + bs58.decode(hash).slice(2).toString('hex');
   }
 
+// Upload an image hash from IPFS to the SC
   const uploadToSC = async (e) => {
     const ipfsHash = e.detail.path;
     //convert ipfsHash to bytes32 to fit the SC
@@ -39,18 +41,21 @@
     getPostsFromSC(e);
   }
 
+// This is call to add claps (likes) to a post on SC
   const clap = (e) => {
     e.preventDefault()
     const imageHash = hashToBytes32(e.detail);
     etherGram.methods.clap(imageHash).send({from: callerAddress})
   }
 
+// This is call to add comments to a post on SC
   const comment = (e) => {
     const commentHash = web3.utils.asciiToHex(e.detail.elements[0].value);
     const imageHash = hashToBytes32(e.detail.name);
     etherGram.methods.comment(imageHash, commentHash).send({from: callerAddress});
   }
 
+// This is call to get all posts uploaded on SC
   const getPostsFromSC = async (e) => {
     e.preventDefault()
     setPage("uploading");
@@ -75,10 +80,12 @@
     setPage("viewImage");
   }
 
+// Get the number of claps (likes) from the SC
   const getClapCountFromSC = async (imageHash) => {
     return etherGram.methods.getClapCount(imageHash).call({from: callerAddress})
   }
 
+// Get all comments from the SC
   const getComment = async (imageHash) => {
     const result = await etherGram.methods.getComments(imageHash).call({from: callerAddress})
     var processedComments=[];

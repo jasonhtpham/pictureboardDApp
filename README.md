@@ -8,4 +8,13 @@ The app uses `IPFS` as a decentralized file storage and `webpack` to facilitate 
 
 And, of course, this cannot be a Dapp without using `web3`, find out more <a href="https://web3js.readthedocs.io/en/v1.2.0/index.html"> here </a>.
 
-Run this app by installing aforementioned dependencies and `npm run dev`
+Run this app by installing aforementioned dependencies
+```
+npm i
+```
+
+Then:
+
+```
+npm run dev
+```
